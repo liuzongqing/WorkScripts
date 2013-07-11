@@ -1,0 +1,53 @@
+<html>
+<head>
+	<title>Jenkins Test</title>
+	<script type="text/javascript" src="../Mcenter/Public/js/jquery.min.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function () {
+			Output();
+			window.IntervalID = setInterval("Output()",5000);
+		});
+
+		function Output(){
+			
+			$.ajax(
+			{
+				type:'GET',
+				url: "jdata.php",
+				dataType: "json",
+				beforeSend: beforeSend,
+				success: callback,
+				complete: complete,
+				error: error, 
+			});
+
+			function error(XMLHttpRequest, textStatus, errorThrown){
+  				// 通常情况下textStatus和errorThown只有其中一个有值 
+  				$("#eshow").append("Request Error!");
+			}
+			function beforeSend(XMLHttpRequest){
+				$("#eshow").append("<img src='loading.gif' width=12 height=12>")
+			}
+			function complete(XMLHttpRequest, textStatus){
+  				// $("#eload").html('<br />Over!');
+			}
+			function callback(jsondata){
+  				$.get('jdata.php?content=logText', function(data) {
+					$("#eshow").html(data);
+				});
+
+				if (!jsondata["building"]) {
+					clearInterval(window.IntervalID);
+				}
+			
+			}
+		}
+	
+	</script>
+</head>
+<body>
+	<h4>Elastic Information<a href="javascript:Output()" id='eload'></a></h4>
+	<div id="eshow"></div>
+	<div id="eshow2"></div>
+</body>
+</html>
