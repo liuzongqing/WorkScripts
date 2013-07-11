@@ -1,9 +1,9 @@
 <?php
 
-$Token = "72c5eb323f212d5e875ea1ea1a6f97fc";
+$Token = "SSSSSSSSSSSSSSSSSSSSSSSSS";
 $User = "zongqing.liu";
-$Job_API = "http://$User:$Token@54.228.131.95:8080/job/type2/54/api/json";
-$Output_API = "http://$User:$Token@54.228.131.95:8080/job/type2/54/logText/progressiveText?start=0";
+$Job_API = "http://$User:$Token@5.0.0.0:8080/job/type2/54/api/json";
+$Output_API = "http://$User:$Token@5.0.0.0:8080/job/type2/54/logText/progressiveText?start=0";
 
 if ($_REQUEST['content'] == "logText") {
 	$result = file_get_contents($Output_API);
