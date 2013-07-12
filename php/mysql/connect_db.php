@@ -4,7 +4,7 @@ set_time_limit(0);
 
 $Mysql_Host = "127.0.0.1";
 $Mysql_Port = "3306";
-$Mysql_Database = "farm";
+$Mysql_Database = "test";
 $Mysql_Table = "idmap";
 $Mysql_User = "root";
 $Mysql_Pass = "";
