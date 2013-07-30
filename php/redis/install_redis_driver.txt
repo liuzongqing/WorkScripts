@@ -1,0 +1,13 @@
+
+##Ubuntu##
+apt-get install php5-dev
+wget https://github.com/nicolasff/phpredis/archive/master.zip
+unzip master.zip
+cd phpredis-master/
+phpize5
+./configure --with-php-config=/usr/bin/php-config
+make
+cd module
+cp redis.so /usr/lib/php5/20100525/
+vim /etc/php5/apache2/php.ini   ##add extension=redis.so
+vim /etc/php5/cli/php.ini ##add extension=redis.so
