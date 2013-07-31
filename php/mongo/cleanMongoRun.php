@@ -61,7 +61,7 @@ $Collections = array(
 foreach ($Collections as $table => $Conditions) {
 	foreach ($Conditions as $condition) {
 		// $count = $MongoDB->selectCollection($table)->find($condition)->count();
-		$result = $MongoDB->selectCollection($table)->remove($Condition);
+		$result = $MongoDB->selectCollection($table)->remove($condition);
 		if ($result) {
 			$message = "TIME: ".date('Y-m-d H:i:s', time())." $dbname $table clean completely\n";
 		}else{
