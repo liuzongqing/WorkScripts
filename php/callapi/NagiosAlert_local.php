@@ -166,7 +166,7 @@ function Get_Service_Data($_Group,$_ADDRESS,$API,$private){
 		$data['address'] = $ADDRESS;
 
 		if ($STATUS > 0) {
-			PostData($API,$data);
+			echo PostData($API,$data);
 		}
 		unset($data);
 	}
