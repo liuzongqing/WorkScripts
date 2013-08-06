@@ -132,13 +132,17 @@ function Get_Service_Data($_Group,$_ADDRESS,$API,$private){
 		// get check_time
 		$pattern = '/last_check\=(.*)/i';
 		preg_match($pattern,$items,$checktime);
-		//$checktime = date("Y-m-d H:i:s",$checktime[1]);
 		array_push($HOSTGROUP,$checktime[1]);
+		// get next_check
+		$pattern = '/next_check\=(.*)/i';
+		preg_match($pattern,$items,$next_checktime);
+		array_push($HOSTGROUP,$next_checktime[1]);
 		
 		$HOSTNAME = $HOSTGROUP[0];
 		$SERVICE = $HOSTGROUP[1];
 		$ADDRESS = $_ADDRESS[$HOSTNAME];
 		$CHECKTIME = $HOSTGROUP[4];
+		$NEXT_CHECKTIME = $HOSTGROUP[5];
 		$STATUS = $HOSTGROUP[2];
 		$OUTPUT = $HOSTGROUP[3];
 		$OUTPUT = str_replace('\'',' ',$OUTPUT);
@@ -156,6 +160,7 @@ function Get_Service_Data($_Group,$_ADDRESS,$API,$private){
 		
 		$data['key'] = $private;
 		$data['checktime'] = $CHECKTIME;
+		$data['next_checktime'] = $NEXT_CHECKTIME;
 		$data['category'] = 'nagios';
 		$data['service'] = $SERVICE;
 		$data['level'] = $STATUS;
@@ -195,13 +200,17 @@ function Get_Host_Data($_Group,$_ADDRESS,$API,$private){
 		// get check_time
 		$pattern = '/last_check\=(.*)/i';
 		preg_match($pattern,$items,$checktime);
-		//$checktime = date("Y-m-d H:i:s",$checktime[1]);
 		array_push($HOSTGROUP,$checktime[1]);
+		// get next_check
+		$pattern = '/next_check\=(.*)/i';
+		preg_match($pattern,$items,$next_checktime);
+		array_push($HOSTGROUP,$next_checktime[1]);
 		
 		$HOSTNAME = $HOSTGROUP[0];
 		$SERVICE = $HOSTGROUP[1];
 		$ADDRESS = $_ADDRESS[$HOSTNAME];
 		$CHECKTIME = $HOSTGROUP[4];
+		$NEXT_CHECKTIME = $HOSTGROUP[5];
 		$STATUS = $HOSTGROUP[2];
 		$OUTPUT = $HOSTGROUP[3];
 		$OUTPUT = str_replace('\'',' ',$OUTPUT);
@@ -219,6 +228,7 @@ function Get_Host_Data($_Group,$_ADDRESS,$API,$private){
 		
 		$data['key'] = $private;
 		$data['checktime'] = $CHECKTIME;
+		$data['next_checktime'] = $NEXT_CHECKTIME;
 		$data['category'] = 'nagios';
 		$data['service'] = $SERVICE;
 		$data['level'] = $STATUS;
