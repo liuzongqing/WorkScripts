@@ -14,50 +14,18 @@ $DATA = array(
 	array(
 		'category'	=>	'nagios',
 		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'no',
-		'is_auto_recover'	=>	'yes',
-		'expired'	=>	300,
+		'expired'	=>	240,
+		'last_checktime'	=>	0,
+		'check_interval'	=>	600,
+		'is_alarm'	=>	'yes',
 		),
 	array(
 		'category'	=>	'elastic',
 		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'no',
-		'is_auto_recover'	=>	'yes',
 		'expired'	=>	300,
-		),
-	array(
-		'category'	=>	'nrpe',
-		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'yes',
-		'is_auto_recover'	=>	'no',
-		'expired'	=>	86400,
-		),
-	array(
-		'category'	=>	'DB-backup',
-		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'yes',
-		'is_auto_recover'	=>	'no',
-		'expired'	=>	0,	// 0 means forever
-		),
-	array(
-		'category'	=>	'cloudplus',
-		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'yes',
-		'is_auto_recover'	=>	'yes',
-		'expired'	=>	600,
-		),
-	array(
-		'category'	=>	'nagios-self',
-		'status'	=>	'open',
-		'alert_level'	=>	2,
-		'is_global'	=>	'yes',
-		'is_auto_recover'	=>	'yes',
-		'expired'	=>	600,
+		'last_checktime'	=>	0,
+		'check_interval'	=>	600,
+		'is_alarm'	=>	'yes',
 		),
 	);
 
@@ -70,27 +38,21 @@ $Collection_rule = $Mongo_connect->selectDB($DBname)->selectCollection('alert_ru
 $Collection_rule->remove();
 $DataRule = array(
 	array(
-		'email'	=>	'zongqing.liu@funplusgame.com',
+		'email'		=>	'zongqing.liu@funplusgame.com',
+		'user'		=>	'zongqing.liu',
 		'category'	=>	'nagios',
-		'service'	=>	['load','mysql','mongo','disk'],
-		'info'	=>	array(
+		'service'	=>	array('load','mysql','mongo','disk'),
+		'info'		=>	array(
 			'project'	=>	'farm',
 			// 'release'	=>	'plingaplay',
-			'type'		=>	'web',
+			// 'type'		=>	'web',
 			),
-		'level'	=>	'1',
-		),
-	array(
-		'email'	=>	'zongqing.liu@funplusgame.com',
-		'category'	=>	'nrpe',
-		'service'	=>	['nrpe'],
-		'level'	=>	'1',
-		),
-	array(
-		'email'	=>	'zongqing.liu@funplusgame.com',
-		'category'	=>	'DB-backup',
-		// 'service'	=>	['nrpe'],
-		'level'	=>	'1',
+		'level'		=>	1,
+		'alarm_time'	=>	array(
+			'timezone'	=>	'Asia/Shanghai',
+			'start'	=>	10,
+			'end'	=>	20,
+			),
 		),
 	);
 
