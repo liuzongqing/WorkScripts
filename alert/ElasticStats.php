@@ -52,7 +52,7 @@ foreach ($TagLists as $list) {
 		$data['message'] = "$pool is not healthy.The amount of host is ($AMOUNT[2] $AMOUNT[1] $AMOUNT[0]) in past 3 checking.<br />";
 		$data['category'] = "elastic";
 		$data['checktime'] = time();
-		$data['level'] = 2;
+		$data['level'] = 1;
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
@@ -65,7 +65,7 @@ foreach ($TagLists as $list) {
 		$data['message'] = "$pool is not healthy.The amount of host is ($AMOUNT[2] $AMOUNT[1] $AMOUNT[0]) in past 3 checking.<br />";
 		$data['category'] = "elastic";
 		$data['checktime'] = time();
-		$data['level'] = 2;
+		$data['level'] = 1;
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
@@ -96,7 +96,7 @@ foreach ($TagLists as $list) {
 		$data['message'] = "$pool is not healthy.The averageload of $pool is ($LOAD[2] $LOAD[1] $LOAD[0]) in past 3 checking.<br />";
 		$data['category'] = "elastic";
 		$data['checktime'] = time();
-		$data['level'] = 2;
+		$data['level'] = 1;
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;

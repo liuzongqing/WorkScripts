@@ -3,9 +3,14 @@ set_time_limit(0); // Don't limit the exec time
 // date_default_timezone_set('Asia/Chongqing'); 
 error_reporting(1); // Don't print warning infomation
 
-$filename = "/tmp/nagios.data";
-$source_file = "/tmp/status.dat.zip";
-$logfile = "/tmp/nagios_alert.log";
+$MyPid = getmypid();
+$Dir = "/tmp/".$MyPid."/";
+if (!is_dir($Dir)) {
+	mkdir($Dir);
+}
+$filename = $Dir."nagios.data";
+$source_file = $Dir."status.dat.zip";
+$logfile = "/mnt/logs/nagios_alert.log";
 
 $NagiosSource = "http://mcenter.socialgamenet.com/index.php/Api/NagiosSource/";
 $data['key'] = "jksydrgf78wgqwrfi374ea52ccddb6950715dfdea7e2f01703";
@@ -43,7 +48,7 @@ foreach ($NagiosStatus as $Nagios) {
 			$log = "[Critical] Time: ".date('Y-m-d m:i:s')." Unzip $key packet failed.\n";
             file_put_contents($logfile, $log, FILE_APPEND);
 		}else{
-			$zip->extractTo("/tmp/");
+			$zip->extractTo($Dir);
 			$zip->close();
 			$log = "[INFO] Time: ".date('Y-m-d m:i:s')." Unzip $key packet successfully.\n";
             file_put_contents($logfile, $log, FILE_APPEND);
@@ -82,6 +87,8 @@ foreach ($NagiosStatus as $Nagios) {
 		$pattern='/servicestatus\ \{(.*?)\}/si';
 		preg_match_all($pattern,$file,$servicegroup);
 		Get_Service_Data($servicegroup[0],$_ADDRESS,$AlertAPI,$AlertPrivate);
+		$log = "[INFO] Time: ".date('Y-m-d m:i:s')." To complete the analysis of $key services\n";
+		file_put_contents($logfile, $log, FILE_APPEND);
 	}
 
 	if( file_exists($filename) && is_readable($filename) ){
@@ -89,8 +96,21 @@ foreach ($NagiosStatus as $Nagios) {
 		$pattern='/hoststatus\ \{(.*?)\}/si';
 		preg_match_all($pattern,$file,$hostgroup);
 		Get_host_Data($hostgroup[0],$_ADDRESS,$AlertAPI,$AlertPrivate);
+		$log = "[INFO] Time: ".date('Y-m-d m:i:s')." To complete the analysis of $key hosts\n";
+		file_put_contents($logfile, $log, FILE_APPEND);
 	}
 }
+
+// remove old file
+unlink($filename);
+unlink($source_file);
+if(rmdir($Dir)){
+	$log = "[INFO] Time: ".date('Y-m-d m:i:s')." Remove $Dir successfully\n";
+}else{
+	$log = "[Critical] Time: ".date('Y-m-d m:i:s')." Remove $Dir failed\n";
+}
+file_put_contents($logfile, $log, FILE_APPEND);
+
 $log = "[INFO] Time: ".date('Y-m-d m:i:s')." Done.\n";
 file_put_contents($logfile, $log, FILE_APPEND);
 
@@ -171,7 +191,7 @@ function Get_Service_Data($_Group,$_ADDRESS,$API,$private){
 		$data['address'] = $ADDRESS;
 
 		if ($STATUS > 0) {
-			echo PostData($API,$data);
+			PostData($API,$data);
 		}
 		unset($data);
 	}
