@@ -34,6 +34,7 @@ function Daemon($Config,$run_times){
 	$Mail_API_KEY = $Config['Mail_API_KEY'];
 	$Mail_API = $Config['Mail_API'];
 	$AutoResloveAPI = $Config['AutoResloveAPI'];
+	$AlarmStatusAPI = $Config['AlarmStatusAPI'];
 	$LogFile = $Config['LogFile'];
 	$PidFile = $Config['PidFile'];
 
