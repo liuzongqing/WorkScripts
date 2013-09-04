@@ -9,6 +9,7 @@ $Config = array(
 	'Mail_API_KEY'		=>	'jksydrgf78wgqwrfi374ea52ccddb6950715dfdea7e2f01703',
 	'Mail_API'	=>	'http://ops:halfquest@mcenter.socialgamenet.com/index.php/Api/sendemail',
 	'AutoResloveAPI'	=> 'http://54.246.122.195/index.php/API/AutoReslove/?key=uowpevadfe1234fdsld1',
+	'AlarmStatusAPI'	=> 'http://54.246.122.195/index.php/API/CategoryStatus/?key=uowpevadfe1234fdsld1',
 	'LogFile'	=>	'/tmp/oas_log.txt',
 	'PidFile'	=>	($argv[1]) ? $argv[1] : '/tmp/oas.pid',
 	);
@@ -17,12 +18,16 @@ $PID = getmypid();
 file_put_contents($Config['PidFile'], $PID);
 
 while ($PID) {
-	Daemon($Config);
+	if(!$run_times || $run_times > 20){
+		$run_times = 1;
+	}
+	Daemon($Config,$run_times);
 	sleep(15);
 	$PID = file_get_contents($Config['PidFile']);
+	$run_times++;
 }
 
-function Daemon($Config){
+function Daemon($Config,$run_times){
 	$DBhost = $Config['DBhost'];
 	$DBport = $Config['DBport'];
 	$DBname = $Config['DBname'];
@@ -36,8 +41,14 @@ function Daemon($Config){
 	if (!$pid) {
 		echo "The daemon script is stopped\n";
 	}
-	// Auto resolve some alert Items
-	file_get_contents($AutoResloveAPI);
+
+	if($run_times % 4 == 0){
+		// Auto resolve some alert Items
+		file_get_contents($AutoResloveAPI);
+	}elseif($run_times % 10 == 0){
+		// Check Alarm system status
+		file_get_contents($AlarmStatusAPI);
+	}
 	// Connect to mongodb
 	$Mongo_connect = new Mongo("mongodb://$DBhost:$DBport");
 	// Get the 'is_timeout=no' and push into alert queue
