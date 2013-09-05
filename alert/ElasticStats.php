@@ -50,33 +50,25 @@ foreach ($TagLists as $list) {
 		continue;
 	}
 
-	// The same time of the day before yesterday
-	$stats['checktime'] = $checktime - 2*86400 + 180;
-	$StatsList_0 = json_decode(PostData($API_status,$stats));
-	
-	// The same time of yesterday
-	$stats['checktime'] = $checktime - 86400 + 180;
-	$StatsList_1 = json_decode(PostData($API_status,$stats));
-
-	// destroy $stats;
-	unset($stats);
 
 	$TotalAmount = 0;
 	$CountTimes = 0;
-	foreach ($StatsList_0 as $item) {
-		$CountTimes ++;
-		$TotalAmount += $item->amount;
+	for ($i=1; $i<=2 ; $i++) { 
+		// The same time of the last $i days
+		$stats['checktime'] = $checktime - (86400 * $i) + 300;
+		$stats['limit'] = 3;
+		$StatsListHisory = json_decode(PostData($API_status,$stats));
+		foreach ($StatsListHisory as $item) {
+			$CountTimes++;
+			$TotalAmount += $item->amount;
+		}
 	}
-	foreach ($StatsList_1 as $item) {
-		$CountTimes ++;
-		$TotalAmount += $item->amount;
-	}
-
+	// destroy stats array
+	unset($stats);
 	$AverageAmount = ceil($TotalAmount/$CountTimes);
 
 	// echo "AverageAmount: $AverageAmount  Current: $AMOUNT[0] ";
 	// echo "$project $release\n";
-
 
 	if ($AMOUNT[0] <= 2 || $AverageAmount <= 2){
 		// echo "Don't care it!";
