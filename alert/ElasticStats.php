@@ -38,15 +38,76 @@ foreach ($TagLists as $list) {
 	$StatsList = json_decode(PostData($API_status,$stats));
 	$AMOUNT = array();
 	$LOAD = array();
+	$checktime = 0;
 	foreach ($StatsList as $item) {
 		array_push($AMOUNT,$item->amount);
 		array_push($LOAD, $item->averageload);
+		$checktime = ($item->checktime > $checktime) ? $item->checktime : $checktime;
 	}
 
 	if (count($AMOUNT) < 3 || count($LOAD) < 3) {
 		// If this group that contains the tags has not been counted 3 times,system would not analyze it
 		continue;
 	}
+
+	// The same time of the day before yesterday
+	$stats['checktime'] = $checktime - 2*86400 + 180;
+	$StatsList_0 = json_decode(PostData($API_status,$stats));
+	
+	// The same time of yesterday
+	$stats['checktime'] = $checktime - 86400 + 180;
+	$StatsList_1 = json_decode(PostData($API_status,$stats));
+
+	// destroy $stats;
+	unset($stats);
+
+	$TotalAmount = 0;
+	$CountTimes = 0;
+	foreach ($StatsList_0 as $item) {
+		$CountTimes ++;
+		$TotalAmount += $item->amount;
+	}
+	foreach ($StatsList_1 as $item) {
+		$CountTimes ++;
+		$TotalAmount += $item->amount;
+	}
+
+	$AverageAmount = ceil($TotalAmount/$CountTimes);
+
+	// echo "AverageAmount: $AverageAmount  Current: $AMOUNT[0] ";
+	// echo "$project $release\n";
+
+
+	if ($AMOUNT[0] <= 2 || $AverageAmount <= 2){
+		// echo "Don't care it!";
+	}elseif(abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 0.25){
+		// If the current number of host is less than 40% the average number of last 2 days.
+		$data['message'] = "$pool is not healthy.There is a very big different between the current amount of host and last 2 days' amount.And the current: $AMOUNT[0] , AverageAmount: $AverageAmount <br />";
+		$data['category'] = "elastic";
+		$data['checktime'] = time();
+		$data['level'] = 1;
+		$data['info']['project'] = $project;
+		$data['info']['release'] = $release;
+		$data['info']['type'] = $type;
+		$data['key'] = $AlertPrivate;
+		$data['service'] = "amount";
+		PostData($AlertAPI,$data);
+		$is_healthy = "no";
+	}elseif (abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 0.4) {
+		// If the current number of host is less than 40% the average number of last 2 days.
+		$data['message'] = "$pool is not healthy.There is a very big different between the current amount of host and last 2 days' amount.And the current: $AMOUNT[0] , AverageAmount: $AverageAmount <br />";
+		$data['category'] = "elastic";
+		$data['checktime'] = time();
+		$data['level'] = 2;
+		$data['info']['project'] = $project;
+		$data['info']['release'] = $release;
+		$data['info']['type'] = $type;
+		$data['key'] = $AlertPrivate;
+		$data['service'] = "amount";
+		PostData($AlertAPI,$data);
+		$is_healthy = "no";
+	}
+
 	if (($AMOUNT[1] - $AMOUNT[2]) > 0 && ($AMOUNT[0] - $AMOUNT[1]) < 0) {
 		// The amount of host increase, then decrease
 		$data['message'] = "$pool is not healthy.The amount of host is ($AMOUNT[2] $AMOUNT[1] $AMOUNT[0]) in past 3 checking.<br />";
@@ -57,7 +118,7 @@ foreach ($TagLists as $list) {
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
 		$data['key'] = $AlertPrivate;
-		$data['service'] = "stats_1";
+		$data['service'] = "amount";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
 	}elseif (($AMOUNT[1] - $AMOUNT[2]) < 0 && ($AMOUNT[0] - $AMOUNT[1]) > 0) {
@@ -70,7 +131,7 @@ foreach ($TagLists as $list) {
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
 		$data['key'] = $AlertPrivate;
-		$data['service'] = "stats_2";
+		$data['service'] = "amount";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
 	}
@@ -85,7 +146,7 @@ foreach ($TagLists as $list) {
 		$data['info']['type'] = $type;
 		$data['checktime'] = time();
 		$data['key'] = $AlertPrivate;
-		$data['service'] = "stats_3";
+		$data['service'] = "load";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
 	}
@@ -101,7 +162,7 @@ foreach ($TagLists as $list) {
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
 		$data['key'] = $AlertPrivate;
-		$data['service'] = "stats_4";
+		$data['service'] = "load";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
 	}elseif ($Diff < 0 && ($Diff/$LOAD[2]) < -$radio && $LOAD[0] < $minload && $LOAD[2] > $minload) {
@@ -114,7 +175,7 @@ foreach ($TagLists as $list) {
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
-		$data['service'] = "stats_5";
+		$data['service'] = "load";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
 	}
@@ -126,7 +187,7 @@ if ($is_healthy == "yes") {
 	$data['checktime'] = time();
 	$data['level'] = 0;
 	$data['key'] = $AlertPrivate;
-	$data['service'] = "stats_5";
+	$data['service'] = "all";
 	PostData($AlertAPI,$data);	
 }
 
