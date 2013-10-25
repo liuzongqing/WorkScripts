@@ -33,7 +33,7 @@ foreach ($TagLists as $list) {
 	$stats['project'] = $project;
 	$stats['release'] = $release;
 	$stats['type'] = $type;
-	$stats['limit'] = 3;
+	$stats['limit'] = 4;
 
 	$StatsList = json_decode(PostData($API_status,$stats));
 	$AMOUNT = array();
@@ -45,7 +45,7 @@ foreach ($TagLists as $list) {
 		$checktime = ($item->checktime > $checktime) ? $item->checktime : $checktime;
 	}
 
-	if (count($AMOUNT) < 3 || count($LOAD) < 3) {
+	if (count($AMOUNT) < $stats['limit'] || count($LOAD) < $stats['limit']) {
 		// If this group that contains the tags has not been counted 3 times,system would not analyze it
 		continue;
 	}
@@ -72,12 +72,12 @@ foreach ($TagLists as $list) {
 
 	if ($AMOUNT[0] <= 2 || $AverageAmount <= 2){
 		// echo "Don't care it!";
-	}elseif(abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 0.25){
+	}elseif(abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 1){
 		// If the current number of host is less than 40% the average number of last 2 days.
 		$data['message'] = "$pool is not healthy.There is a very big different between the current amount of host and last 2 days' amount.And the current: $AMOUNT[0] , AverageAmount: $AverageAmount <br />";
 		$data['category'] = "elastic";
 		$data['checktime'] = time();
-		$data['level'] = 1;
+		$data['level'] = 2;
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
@@ -85,12 +85,12 @@ foreach ($TagLists as $list) {
 		$data['service'] = "amount";
 		PostData($AlertAPI,$data);
 		$is_healthy = "no";
-	}elseif (abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 0.4) {
+	}elseif (abs(($AMOUNT[0] - $AverageAmount)/$AverageAmount) > 0.5) {
 		// If the current number of host is less than 40% the average number of last 2 days.
 		$data['message'] = "$pool is not healthy.There is a very big different between the current amount of host and last 2 days' amount.And the current: $AMOUNT[0] , AverageAmount: $AverageAmount <br />";
 		$data['category'] = "elastic";
 		$data['checktime'] = time();
-		$data['level'] = 2;
+		$data['level'] = 1;
 		$data['info']['project'] = $project;
 		$data['info']['release'] = $release;
 		$data['info']['type'] = $type;
@@ -128,9 +128,9 @@ foreach ($TagLists as $list) {
 		$is_healthy = "no";
 	}
 
-	if ($LOAD[2] > $maxload && $LOAD[1] > $maxload && $LOAD[0] > $maxload) {
+	if ($LOAD[3] > $maxload && $LOAD[2] > $maxload && $LOAD[1] > $maxload && $LOAD[0] > $maxload) {
 		// The average load of pool is more than 13 for 2 times
-		$data['message'] = "$pool is not healthy.The averageload of $pool is ($LOAD[2] $LOAD[1] $LOAD[0]) in past 3 checking.<br />";
+		$data['message'] = "$pool is not healthy.The averageload of $pool is ($LOAD[3] $LOAD[2] $LOAD[1] $LOAD[0]) in past 4 checking.<br />";
 		$data['category'] = "elastic";
 		$data['level'] = 2;
 		$data['info']['project'] = $project;
