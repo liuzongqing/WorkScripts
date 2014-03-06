@@ -25,8 +25,7 @@ foreach ($NagiosStatus as $Nagios) {
 	$hostStatusJson = file_get_contents($hostStatusURL);
 	if(!$hostStatusJson){
 		$log = "[ERROR] Time: ".date('Y-m-d m:i:s')." Failed to get the host status of $key($hostStatusURL).\n";
-    	file_put_contents($logfile, $log, FILE_APPEND);
-		continue;
+		file_put_contents($logfile, $log, FILE_APPEND);
 	}else{
 		$log = "[INFO] Time: ".date('Y-m-d m:i:s')." Completed to get the host status of $key($hostStatusURL).\n";
 		echo $log;
@@ -49,8 +48,7 @@ foreach ($NagiosStatus as $Nagios) {
 	$serviceStatusJson = file_get_contents($serviceStatusURL);
 	if(!$serviceStatusJson){
 		$log = "[ERROR] Time: ".date('Y-m-d m:i:s')." Failed to get the service status of $key($serviceStatusURL).\n";
-    	file_put_contents($logfile, $log, FILE_APPEND);
-		continue;
+		file_put_contents($logfile, $log, FILE_APPEND);
 	}else{
 		$log = "[INFO] Time: ".date('Y-m-d m:i:s')." Completed to get the service status of $key($serviceStatusURL).\n";
 		echo $log;
